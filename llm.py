@@ -21,12 +21,19 @@ def get_bron_documents(query):
     url = 'https://api.bron.live/documents/search?' + query_string
     resp = requests.get(url)
     resp.raise_for_status()
-    results = [
-        {'title': i['_source']['title'], 'snippet': "\n".join(
-            i['highlight'].get('description') or
-            i['highlight'].get('title', ''))
-        } for i in resp.json()['hits']['hits']
-    ]
+
+    results = []
+    for i in resp.json()['hits']['hits']:
+            results += [{
+                'title': i['_source']['title'],
+                'snippet': d
+            } for d in i['highlight'].get('description', [])]
+    # results = [
+    #     {'title': i['_source']['title'], 'snippet': "\n".join(
+    #         i['highlight'].get('description') or
+    #         i['highlight'].get('title', ''))
+    #     } for i in resp.json()['hits']['hits']
+    # ]
     return results
 
 def main(argv):
