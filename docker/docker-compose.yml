@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+   shell:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/opt/bron-llm
+    networks:
+      - bron-llm
+    restart: always
+networks:
+  bron-llm:
