@@ -41,34 +41,44 @@ def main(argv):
     #qst = "Hoe worden vluchtelingen opgevangen de respectievelijke gemeenten?"
     #qst = "Hoe gaan gemeenten om met windmolens en andere vormen van schone energie?"
     #qst = "hoe staat het met de parken in almelo?"
-    qst = "Om vluchtelingen beter op te vangen worden er in gemeenten lokale voorzieningen getroffen om vluchtelingen te helpen. Welke voorzieningen voor vluchtelingen zijn er in almelo?"
-    co = cohere.Client(api_key=os.getenv("COHERE_API_KEY"))
+    qst = 'x'
+    chat_history = []
+    chat_history_incl = []
+    while qst != 'exit':
+        qst = input('Geef een vraag warop je het antwoord wil weten : ')
+        if qst.strip() == '':
+            qst = "Om vluchtelingen beter op te vangen worden er in gemeenten lokale voorzieningen getroffen om vluchtelingen te helpen. Welke voorzieningen voor vluchtelingen zijn er in almelo?"
+        co = cohere.Client(api_key=os.getenv("COHERE_API_KEY"))
 
-    print(f"Vraag: {qst}")
+        print(f"Vraag: {qst}")
 
-    resp = co.chat(
-      model="command-r-plus",
-      message=qst,
-      search_queries_only=True
-    )
-    #pprint(dict(resp))
-    all_documents = []
-    print("Genegereerde queries:")
-    for q in resp.search_queries:
-        print(q.text)
-        all_documents += get_bron_documents(q.text)
-    print("%d documenten meegestuurd" % (len(all_documents,)))
-    #pprint(all_documents)
-    #all_documents=[]
-    answer = co.chat(
-      model="command-r-plus",
-      message=qst,
-      documents=all_documents,
-      prompt_truncation='AUTO')
-    #pprint(answer)
+        if qst.strip() == 'exit':
+            continue
 
-    print("Antwoord")
-    print(answer.text)
+        resp = co.chat(
+          model="command-r-plus",
+          message=qst,
+          chat_history=chat_history,
+          search_queries_only=True
+        )
+        #pprint(dict(resp))
+        all_documents = []
+        print("Genegereerde queries:")
+        for q in resp.search_queries:
+            print(q.text)
+            all_documents += get_bron_documents(q.text)
+        print("%d documenten meegestuurd" % (len(all_documents,)))
+        #pprint(all_documents)
+        #all_documents=[]
+        answer_incl = co.chat(
+          model="command-r-plus",
+          message=qst,
+          chat_history=chat_history,
+          documents=all_documents,
+          prompt_truncation='AUTO')
+        chat_history = answer_incl.chat_history
+        print('Antwoord met RAG')
+        print(answer_incl.text)
     return 0
 
 if __name__ == '__main__':
