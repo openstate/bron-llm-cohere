@@ -70,15 +70,25 @@ def main(argv):
         print("%d documenten meegestuurd" % (len(all_documents,)))
         #pprint(all_documents)
         #all_documents=[]
-        answer_incl = co.chat(
+
+        for event in co.chat_stream(
           model="command-r-plus",
           message=qst,
           chat_history=chat_history,
           documents=all_documents,
-          prompt_truncation='AUTO')
-        chat_history = answer_incl.chat_history
-        print('Antwoord met RAG')
-        print(answer_incl.text)
+          prompt_truncation='AUTO'
+        ):
+            if event.event_type == "text-generation":
+                sys.stdout.write(event.text)
+            elif event.event_type == "stream-end":
+                print()
+                chat_history = [dict(e) for e in event.response.chat_history]
+            else:
+                print(event.event_type)
+        print("Chat history:")
+        print("----------------------------------")
+        print(chat_history)
+        print("----------------------------------")
     return 0
 
 if __name__ == '__main__':
