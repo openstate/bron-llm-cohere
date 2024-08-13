@@ -15,7 +15,7 @@ def get_bron_documents(query):
         'query': query,
         'filter': 'source:openbesluitvorming,woo,poliflw',
         'excludes': '',
-        'limit': 400
+        'limit': 350
     }
     query_string = urlencode(params)
     url = 'https://api.bron.live/documents/search?' + query_string
@@ -37,25 +37,38 @@ def get_bron_documents(query):
     return results
 
 def main(argv):
-    qst = "Hoe ziet het bestuurlijke apparaat van NL er uit?"
+    #qst = "Hoe ziet het bestuurlijke apparaat van NL er uit?"
+    #qst = "Hoe worden vluchtelingen opgevangen de respectievelijke gemeenten?"
+    #qst = "Hoe gaan gemeenten om met windmolens en andere vormen van schone energie?"
+    #qst = "hoe staat het met de parken in almelo?"
+    qst = "Om vluchtelingen beter op te vangen worden er in gemeenten lokale voorzieningen getroffen om vluchtelingen te helpen. Welke voorzieningen voor vluchtelingen zijn er in almelo?"
     co = cohere.Client(api_key=os.getenv("COHERE_API_KEY"))
+
+    print(f"Vraag: {qst}")
 
     resp = co.chat(
       model="command-r-plus",
       message=qst,
       search_queries_only=True
     )
-    pprint(dict(resp))
+    #pprint(dict(resp))
     all_documents = []
+    print("Genegereerde queries:")
     for q in resp.search_queries:
+        print(q.text)
         all_documents += get_bron_documents(q.text)
-    pprint(all_documents)
+    print("%d documenten meegestuurd" % (len(all_documents,)))
+    #pprint(all_documents)
+    #all_documents=[]
     answer = co.chat(
       model="command-r-plus",
       message=qst,
-      documents=all_documents)
-    pprint(answer)
+      documents=all_documents,
+      prompt_truncation='AUTO')
+    #pprint(answer)
 
+    print("Antwoord")
+    print(answer.text)
     return 0
 
 if __name__ == '__main__':
