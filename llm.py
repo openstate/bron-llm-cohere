@@ -13,9 +13,11 @@ import cohere
 def get_bron_documents(query):
     params = {
         'query': query,
-        'filter': 'source:openbesluitvorming,woo,poliflw',
+        #'filter': 'source:openbesluitvorming,woo,poliflw',
+        'filter': 'source:openbesluitvorming,woo,poliflw|location:gm0141',
         'excludes': '',
-        'limit': 350
+        'limit': 350,
+        'default_operator': 'and'
     }
     query_string = urlencode(params)
     url = 'https://api.bron.live/documents/search?' + query_string
@@ -83,6 +85,8 @@ def main(argv):
             elif event.event_type == "stream-end":
                 print()
                 chat_history = [dict(e) for e in event.response.chat_history]
+            elif event.event_type == 'citation-generation':
+                sys.stdout.write(str(event) + "\n")
             else:
                 print(event.event_type)
         print("Chat history:")
