@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - "CO_API_KEY=wm3i2MGqTjkfOivAqCptxCb6BUrefj71IAeSBbUl"
     volumes:
       - ../:/opt/bron-llm
     networks:

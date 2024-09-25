@@ -14,7 +14,7 @@ def get_bron_documents(query):
     params = {
         'query': query,
         #'filter': 'source:openbesluitvorming,woo,poliflw',
-        'filter': 'source:openbesluitvorming,woo,poliflw|location:gm0141',
+        'filter': 'source:openbesluitvorming,woo,poliflw',
         'excludes': '',
         'limit': 350,
         'default_operator': 'and'
@@ -70,7 +70,7 @@ def main(argv):
             print(q.text)
             all_documents += get_bron_documents(q.text)
         print("%d documenten meegestuurd" % (len(all_documents,)))
-        #pprint(all_documents)
+        pprint(all_documents)
         #all_documents=[]
 
         for event in co.chat_stream(
