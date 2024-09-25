@@ -5,8 +5,9 @@ Use bron as RAG with [CoHere](https://cohere.com/)
 
 1. `git pull`
 2. modify the docker-compose.yml file so that a CO_API_KEY is exposed with your CoHere API Key, like below
-3. `docker-compose up -d`
-4. `docker exec -it bron-llm_shell_1 ./llm.py`
+3. `cd docker`
+4. `docker-compose up -d`
+5. `docker exec -it bron-llm_shell_1 ./llm.py`
 
 ## example docker-compose with CoHere API key 
 ```
